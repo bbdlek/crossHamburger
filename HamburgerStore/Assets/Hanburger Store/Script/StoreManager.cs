@@ -46,6 +46,7 @@ public class StoreManager : MonoBehaviour
 
         //초기 돈 설정;
         wage = (uint)PlayerPrefs.GetInt("TotalMoney");
+        income = wage;
 
         //초기 재료 설정
         LoadIngredients();
