@@ -171,6 +171,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7268917350854741219}
+  - component: {fileID: 2043056635811901513}
   m_Layer: 0
   m_Name: HbgStore
   m_TagString: Untagged
@@ -203,6 +204,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2043056635811901513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349372966269620752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fbca24a08dba604e87f689254a2ad6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ingredients:
+  - {fileID: 7928451611135898185}
+  - {fileID: 5074238322010456273}
+  - {fileID: 3772024431389694899}
+  - {fileID: 496853734501732030}
+  - {fileID: 545486336371801434}
+  - {fileID: 5238431660013750533}
+  - {fileID: 1515646070688527743}
+  - {fileID: 7225295432458804947}
 --- !u!1 &407246515622203584
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,10 +11,13 @@ public class TimerManager : MonoBehaviour
     public float time = 60f;
     private float countDown;
 
+    [SerializeField] private Text _dayText;
+
     // Start is called before the first frame update
     void Start()
     {
         countDown = time;
+        _dayText.text = "Day " + PlayerPrefs.GetInt("Day");
     }
 
     // 플레이 시간이 끝나면 종료화면으로 전환함

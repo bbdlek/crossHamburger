@@ -14,7 +14,8 @@ public class StoreManager : MonoBehaviour
     public GameObject _theBurger, _theCustomed;
     public Transform _storePoint;
     public static uint income;
-    public uint wage = 0;
+    //public uint wage = 0;
+    public uint wage;
     public AudioClip[] _sound = new AudioClip[3];
     private AudioSource audioSource;
     
@@ -32,6 +33,9 @@ public class StoreManager : MonoBehaviour
     public GameObject[] _ingredients = new GameObject[(int)Ingredients.Count];
     private Queue<Ingredients> hamburger = new Queue<Ingredients>();
 
+    public int _breadBottom, _beef, _chicken, _bacon, _egg, _tomato, _lettuce, _breadTop;
+
+    [SerializeField] private GameObject _orderPanel;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +43,12 @@ public class StoreManager : MonoBehaviour
         audioSource = this.GetComponent<AudioSource>();
         tStore = Instantiate(_theStore);
         Invoke("FirstPerson", 3);
+
+        //초기 돈 설정;
+        wage = (uint)PlayerPrefs.GetInt("TotalMoney");
+
+        //초기 재료 설정
+        LoadIngredients();
     }
 
     // Update is called once per frame
@@ -80,7 +90,8 @@ public class StoreManager : MonoBehaviour
         if (isPerson)
         {
             tPerson.transform.position = _storePoint.transform.position + new Vector3(randomX, y, randomZ);
-            tBurger.transform.position = randomX >= 0 ?
+            if(tBurger)
+                tBurger.transform.position = randomX >= 0 ?
                                         tPerson.transform.position + new Vector3(-0.45f, 1.0f, -0.2f) :
                                         tPerson.transform.position + new Vector3(0.45f, 1.0f, -0.2f);
             tBoard.transform.position = _storePoint.transform.position +new Vector3(0, 0.007f, 0.12f);
@@ -100,16 +111,29 @@ public class StoreManager : MonoBehaviour
         }
         else
         {
-            tBoard.SetActive(true);
-            isBoard = true;
-            Debug.Log("Reveal the Board.");
+            _orderPanel.SetActive(true);
         }
+    }
+
+    public void YesToOrder()
+    {
+        tBoard.SetActive(true);
+        isBoard = true;
+        Debug.Log("Reveal the Board.");
+    }
+    
+    public void NoToOrder()
+    {
+        Destroy(tBurger);
+        InitialCustomed();
+        tPerson.SetActive(false);
+        Invoke("NewPerson", 4);
     }
 
     // 손님과 햄버거 재료들을 터치했을 때 동작함
     private void TouchObject()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
         {
             Vector3 touchPosition = Input.mousePosition;
 
@@ -129,6 +153,7 @@ public class StoreManager : MonoBehaviour
                 hamburger.Enqueue(igdtQ);
                 if (igdt != igdtQ)
                 {
+                    LoadIngredients();
                     setAudio(Sound.Wrong);
                     InitialCustomed();
                     ResetHamburger();
@@ -150,6 +175,7 @@ public class StoreManager : MonoBehaviour
                 if (isPerfect)
                 {
                     wage += CountMoney();
+                    SaveIngredients();
                     income = wage;
                     setAudio(Sound.Cash);
                     isPerfect = false;
@@ -234,41 +260,81 @@ public class StoreManager : MonoBehaviour
         switch (str)
         {
             case "BreadBottom":
+                if (_breadBottom > 0)
+                {
+                    _breadBottom -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[0], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 onBoard += new Vector3(0, +0.003f, 0);
                 igdt = Ingredients.BreadBottom;
                 break;
             case "Beef":
+                if (_beef > 0)
+                {
+                    _beef -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[1], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 onBoard += new Vector3(0, +0.01f, 0);
                 igdt = Ingredients.Beef;
                 break;
             case "Chicken":
+                if (_chicken > 0)
+                {
+                    _chicken -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[2], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 onBoard += new Vector3(0, +0.01f, 0);
                 igdt = Ingredients.Chicken;
                 break;
             case "Bacon":
+                if (_bacon > 0)
+                {
+                    _bacon -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[3], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 onBoard += new Vector3(0, -0.005f, 0);
                 igdt = Ingredients.Bacon;
                 break;
             case "Egg":
+                if (_egg > 0)
+                {
+                    _egg -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[4], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 onBoard += new Vector3(0, -0.01f, 0);
                 igdt = Ingredients.Egg;
                 break;
             case "Tomato":
+                if (_tomato > 0)
+                {
+                    _tomato -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[5], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 onBoard += new Vector3(0, -0.005f, 0);
                 igdt = Ingredients.Tomato;
                 break;
             case "Lettuce":
+                if (_lettuce > 0)
+                {
+                    _lettuce -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[6], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 onBoard += new Vector3(0, -0.015f, 0);
                 igdt = Ingredients.Lettuce;
                 break;
             case "BreadTop":
+                if (_breadTop > 0)
+                {
+                    _breadTop -= 1;
+                }
+                else ResetHamburger();
                 Instantiate(_ingredients[7], onBoard, Quaternion.identity).transform.SetParent(tCustomed.transform, false);
                 igdt = Ingredients.BreadTop;
                 break;
@@ -288,6 +354,7 @@ public class StoreManager : MonoBehaviour
 
     // 새 손님이 왔을 때 무작위 햄버거를 만들 수 있도록 queue를 초기화
     private void ResetHamburger(){
+        LoadIngredients();
         while (true)
         {
             Ingredients igdtQ = hamburger.Dequeue();
@@ -345,4 +412,31 @@ public class StoreManager : MonoBehaviour
 
         return money;
     }
+
+    private void LoadIngredients()
+    {
+        _breadBottom = PlayerPrefs.GetInt("BreadBottom");
+        _beef = PlayerPrefs.GetInt("Beef");
+        _chicken = PlayerPrefs.GetInt("Chicken");
+        _bacon = PlayerPrefs.GetInt("Bacon");
+        _egg = PlayerPrefs.GetInt("Egg");
+        _tomato = PlayerPrefs.GetInt("Tomato");
+        _lettuce = PlayerPrefs.GetInt("Lettuce");
+        _breadTop = PlayerPrefs.GetInt("BreadTop");
+    }
+
+    private void SaveIngredients()
+    {
+        PlayerPrefs.SetInt("BreadBottom", _breadBottom);
+        PlayerPrefs.SetInt("Beef", _beef);
+        PlayerPrefs.SetInt("Chicken", _chicken);
+        PlayerPrefs.SetInt("Bacon", _bacon);
+        PlayerPrefs.SetInt("Egg", _egg);
+        PlayerPrefs.SetInt("Tomato", _tomato);
+        PlayerPrefs.SetInt("Lettuce", _lettuce);
+        PlayerPrefs.SetInt("BreadTop", _breadTop);
+
+        PlayerPrefs.Save();
+    }
+
 }

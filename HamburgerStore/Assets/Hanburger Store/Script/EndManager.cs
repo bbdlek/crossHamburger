@@ -20,12 +20,17 @@ public class EndManager : MonoBehaviour
 
         // 수입을 화면에 표시함
         cash.text = StoreManager.income.ToString() + " 원";
+
+        //수입을 전체 돈에 저장
+        PlayerPrefs.SetInt("TotalMoney", (int)StoreManager.income);
+        PlayerPrefs.Save();
     }
 
     // 마감 버튼 클릭 시 시작화면으로 전환
     // Update is called once per frame
     public void ClickButton()
     {
+        DayUpdate();
         Destroy(GameObject.Find("StartManager"));
         ChangeScene();
     }
@@ -33,5 +38,11 @@ public class EndManager : MonoBehaviour
     public void ChangeScene()
     {
         SceneManager.LoadScene("Start");
+    }
+
+    void DayUpdate()
+    {
+        PlayerPrefs.SetInt("Day", PlayerPrefs.GetInt("Day") + 1);
+        PlayerPrefs.Save();
     }
 }
